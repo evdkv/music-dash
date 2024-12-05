@@ -140,9 +140,9 @@ function loadDemo() {
   wavesurfer.load('/audio.mp3');
 }
 
-document.getElementById('demo').addEventListener('click', () => {
-  loadDemo();
-});
+// document.getElementById('demo').addEventListener('click', () => {
+//   loadDemo();
+// });
 
 document.getElementById('reset').addEventListener('click', () => {
   resetAudio();
