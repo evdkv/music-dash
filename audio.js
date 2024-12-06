@@ -1,11 +1,53 @@
+// Declare Web Audio API variables
 var wavesurfer = null;
 var frequencyData = null;
 var audioContext = null;
 var analyser = null;
-let dataArray = null;
-let bufferLength = null;
+var dataArray = null;
+var bufferLength = null;
 
-const audio = new Audio();
+// Variables for BPM calculation
+var lastBeatTime = 0;  // Timestamp of the last detected beat
+var bpm = 0;  // Current BPM
+var beatInterval = 0;  // Time difference between beats in milliseconds
+var beatCounter = 0;  // Number of beats detected\
+var currentSecond = 0;  // Flag to check if a second has passed
+
+// Canvases setup
+const canvasb = document.getElementById('beat');
+const ctxb = canvasb.getContext('2d');
+
+const canvasw = document.getElementById('mirrorwave');
+const ctxw = canvasw.getContext('2d');
+
+const canvasl = document.getElementById('loudnessbar');
+const ctxl = canvasl.getContext('2d');
+
+let beatContainer = document.getElementById('beatCanvas').getBoundingClientRect();
+let waveContainer = document.getElementById('waveCanvas').getBoundingClientRect();
+let loudnessContainer = document.getElementById('barCanvas').getBoundingClientRect();
+
+canvasb.width = beatContainer.width;
+canvasb.height = beatContainer.height;
+
+canvasl.width = loudnessContainer.width - 10;
+canvasl.height = loudnessContainer.height - 10;
+
+canvasw.width = waveContainer.width - 10;
+canvasw.height = waveContainer.height - 10;
+
+// Display the titles on the canvases
+ctxb.font = '20px Arial';
+ctxb.fillStyle = 'black';
+ctxb.fillText(`BPM:`, 20, 40);
+
+ctxw.font = '20px Arial';
+ctxw.fillStyle = 'black';
+ctxw.fillText(`Waveform`, 20, 40);
+
+ctxl.font = '20px Arial';
+ctxl.fillStyle = 'black';
+ctxl.fillText(`Loudness`, 20, 40);
 
 function initWaveSurfer() { 
   wavesurfer = WaveSurfer.create({
@@ -17,7 +59,7 @@ function initWaveSurfer() {
     barGap: 1,
     barRadius: 2,
     media: audio,
-  })
+  });
 
   wavesurfer.registerPlugin(
     WaveSurfer.Spectrogram.create({
@@ -25,14 +67,14 @@ function initWaveSurfer() {
       height: 500,
       splitChannels: true,
     }),
-  )
+  );
 
   wavesurfer.on('interaction', () => {
     wavesurfer.play()
-  })
+  });
   
   wavesurfer.on('timeupdate', function (currentTime) {
-    updateDFT();
+    updateVisualizations();
   });
   wavesurfer.on('error', function(error) {
     console.error("Error loading audio:", error);
@@ -42,6 +84,9 @@ function initWaveSurfer() {
 document.getElementById('play').addEventListener('click', () => {
   wavesurfer.playPause()
 })
+
+// Create an Audio object
+const audio = new Audio();
 
 initWaveSurfer();
 
@@ -57,49 +102,7 @@ wavesurfer.on('ready', function () {
   analyser.connect(audioContext.destination);
 });
 
-const canvasb = document.getElementById('beat');
-const ctxb = canvasb.getContext('2d');
-
-const canvasw = document.getElementById('mirrorwave');
-const ctxw = canvasw.getContext('2d');
-
-const canvasl = document.getElementById('loudnessbar');
-const ctxl = canvasl.getContext('2d');
-
-let beatContainer = document.getElementById('beatCanvas').getBoundingClientRect();
-let waveContainer = document.getElementById('waveCanvas').getBoundingClientRect();
-let loudnessContainer = document.getElementById('barCanvas').getBoundingClientRect();
-
-
-canvasb.width = beatContainer.width;
-canvasb.height = beatContainer.height;
-
-canvasl.width = loudnessContainer.width - 10;
-canvasl.height = loudnessContainer.height - 10;
-
-canvasw.width = waveContainer.width - 10;
-canvasw.height = waveContainer.height - 10;
-
-// Display the BPM on the canvas
-ctxb.font = '20px Arial';
-ctxb.fillStyle = 'black';
-ctxb.fillText(`BPM:`, 20, 40);
-
-ctxw.font = '20px Arial';
-ctxw.fillStyle = 'black';
-ctxw.fillText(`Waveform`, 20, 40);
-
-ctxl.font = '20px Arial';
-ctxl.fillStyle = 'black';
-ctxl.fillText(`Loudness`, 20, 40);
-
-// Variables for BPM calculation
-let lastBeatTime = 0;  // Timestamp of the last detected beat
-let bpm = 0;  // Current BPM
-let beatInterval = 0;  // Time difference between beats in milliseconds
-let beatCounter = 0;  // Number of beats detected\
-let currentSecond = 0;  // Flag to check if a second has passed
-
+// Plotly setup
 const trace = {
   x: [],
   y: [],
@@ -156,7 +159,7 @@ function resetAudio() {
 }
 
 // Update DFT in real-time
-function updateDFT() {
+function updateVisualizations() {
   analyser.getByteFrequencyData(dataArray);
   
   let frequencies = [];
@@ -166,7 +169,7 @@ function updateDFT() {
     amplitudes.push(dataArray[i]);
   }
 
-  plotDFT(frequencies, amplitudes);
+  renderDFT(frequencies, amplitudes);
   renderWaveform();
   renderLoudness()
 
@@ -204,7 +207,7 @@ function updateDFT() {
   }
 }
 
-function plotDFT(frequencies, amplitudes) {
+function renderDFT(frequencies, amplitudes) {
   const trace = {
     x: frequencies,
     y: amplitudes,
@@ -266,7 +269,6 @@ function renderWaveform() {
   ctxw.stroke();
 }
 
-
 // Draw loudness visualization
 function renderLoudness() {
     // Compute RMS loudness
@@ -281,13 +283,12 @@ function renderLoudness() {
     // Draw a bar representing loudness
     ctxl.fillStyle = 'rgb(17, 30, 108)';
     ctxl.fillRect((canvasl.width / 3), canvasl.height - height, (canvasl.width / 3) , height);
-
 }
 
 function computeRMS(data) {
   let sum = 0;
   for (let i = 0; i < data.length; i++) {
-      sum += Math.pow(data[i] - 128, 2); // Subtracting 128 to center the waveform
+      sum += Math.pow(data[i] - 128, 2); // Subtracting 128 to center the waveform on the canvas
   }
   const rms = Math.sqrt(sum / data.length);
   return rms;

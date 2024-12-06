@@ -11,7 +11,6 @@
   <script type="module" src="audio.js"></script>
 </head>
 <body>
-<!-- Making a simple dashboard setup -->
 <div class="flex h-screen">
   <div class="h-screen w-40 bg-gray-800">
     <div class="flex items-center justify-center h-16 bg-gray-900">
@@ -25,14 +24,12 @@
       <!-- <button class="py-2 px-4 text-gray-400 hover:bg-gray-700 hover:text-white" id="demo">Load Demo</button> -->
       <button class="py-2 px-4 text-gray-400 hover:bg-gray-700 hover:text-white" id="reset">Clear</button>
     </div>
-      <!-- align the button at the bottom-->
       <div class="flex flex-col">
         <button id="play" class="bg-gray-900 text-white px-4 py-2 m-2 rounded-lg hover:text-gray-400">Play/Pause</button>
       </div>
 
     </div>
   </div>
-
   <div class="relative h-screen w-screen">
     <div class="grid grid-cols-2 grid-rows-2 gap-3 p-2 h-[80%]">
       <div class="bg-white p-1 rounded-lg shadow-xl" id="plotlycard">
@@ -40,27 +37,25 @@
       </div>
       <div class="bg-white p-1 rounded-lg shadow-xl" id="beatCanvas">
         <canvas id="beat"></canvas>
+      </div>
+      <div class="bg-white p-1 rounded-lg shadow-xl" id="waveCanvas">
+        <canvas id="mirrorwave"></canvas>
+      </div>
+      <div class="bg-white p-1 rounded-lg shadow-xl" id="barCanvas">
+        <canvas id="loudnessbar"></canvas>
+      </div>
     </div>
-    <div class="bg-white p-1 rounded-lg shadow-xl" id="waveCanvas">
-      <canvas id="mirrorwave"></canvas>
-    </div>
-    <div class="bg-white p-1 rounded-lg shadow-xl" id="barCanvas">
-      <canvas id="loudnessbar"></canvas>
-    </div>
-  </div>
-  <div class="p-2 absolute inset-x-0 bottom-0 h-[15%]">
-    <div class="flex items-center justify-center">
-      <div class="absolute inset-x-0 bottom-0 p-2">
-          <div class="bg-white p-4 rounded-lg shadow-xl justify-self-stretch">
-            <div id="waveform"></div>
+    <div class="p-2 absolute inset-x-0 bottom-0 h-[15%]">
+      <div class="flex items-center justify-center">
+        <div class="absolute inset-x-0 bottom-0 p-2">
+            <div class="bg-white p-4 rounded-lg shadow-xl justify-self-stretch">
+              <div id="waveform"></div>
+            </div>
           </div>
-        </div>
-      <!-- <button id="pause" class="bg-gray-800 text-white px-4 py-2 rounded-lg">Pause</button> -->
+      </div>
     </div>
   </div>
 </div>
-</div>
- 
 </body>
 <input style="visibility:hidden" type="file" id="audioUpload" accept="audio/*">
 </html>
