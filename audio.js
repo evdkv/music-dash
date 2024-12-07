@@ -173,6 +173,7 @@ function updateVisualizations() {
   renderWaveform();
   renderLoudness()
 
+  // [4] Beat Detection Algorithm. https://www.parallelcube.com/2018/03/30/beat-detection-algorithm/
   let sum = 0;
   // Analyze low frequencies (bass ranges where beats are usually prominent)
   for (let i = 0; i < 100; i++) {
@@ -285,6 +286,7 @@ function renderLoudness() {
     ctxl.fillRect((canvasl.width / 3), canvasl.height - height, (canvasl.width / 3) , height);
 }
 
+// [5] Loudness Calculation. https://github.com/Sreeleena3s/Loudness-calculation
 function computeRMS(data) {
   let sum = 0;
   for (let i = 0; i < data.length; i++) {
