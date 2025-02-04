@@ -7,7 +7,7 @@
   <!-- Using Tailwind, WaveSurfer, and Plotly here -->
   <script src="https://cdn.tailwindcss.com"></script> 
   <script src="https://unpkg.com/wavesurfer.js@7"></script>
-  <script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@7/dist/plugins/spectrogram.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@7.8.5/dist/plugins/spectrogram.min.js"></script>
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
   <script type="module" src="audio.js"></script>
 </head>
@@ -46,7 +46,7 @@
         <canvas id="loudnessbar"></canvas>
       </div>
     </div>
-    <div class="p-2 absolute inset-x-0 bottom-0 h-[15%]">
+    <div class="p-2 absolute inset-x-0 bottom-0 *:h-[15%]">
       <div class="flex items-center justify-center">
         <div class="absolute inset-x-0 bottom-0 p-2">
             <div class="bg-white p-4 rounded-lg shadow-xl justify-self-stretch">

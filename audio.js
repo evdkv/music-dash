@@ -64,7 +64,7 @@ function initWaveSurfer() {
   wavesurfer.registerPlugin(
     WaveSurfer.Spectrogram.create({
       labels: true,
-      height: 500,
+      height: 10,
       splitChannels: true,
     }),
   );
